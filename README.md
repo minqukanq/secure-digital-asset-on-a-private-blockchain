@@ -31,7 +31,8 @@ This project has the following dependencies:
 
 ## Architecture
 **DIAGRAM OF SEQUENCE**
-![project-workflow-sequence-diagram](/Users/mingukang/Projects/Nodejs/secure-digital-asset-on-a-private-blockchain/project-workflow-sequence-diagram.png)
+
+![project-workflow-sequence-diagram](https://github.com/minqukanq/secure-digital-asset-on-a-private-blockchain/blob/master/img/project-workflow-sequence-diagram.png)
 
 ## Endpoints
 
@@ -48,6 +49,10 @@ curl -X POST \
 }'
 ```
 
+![RequestObject](https://github.com/minqukanq/secure-digital-asset-on-a-private-blockchain/blob/master/img/RequestObject.png)
+
+
+
 **/message-signature/validate/** - Check if the user owns the bitcoin wallet. The user must submit a signed message by his bitcoin wallet.
 
 ```
@@ -60,6 +65,10 @@ curl -X POST \
 "signature":"H8K4+1MvyJo9tcr2YN2KejwvX1oqneyCH+fsUL1z1WBdWmswB9bijeFfOfMqK68kQ5RO6ZxhomoXQG3fkLaBl+Q="
 }'
 ```
+
+![ValidRequest](https://github.com/minqukanq/secure-digital-asset-on-a-private-blockchain/blob/master/img/ValidRequest.png)
+
+
 
 **/block/** - After the user ensures that he owns the wallet, he can request the registration of a star in the block.
 
@@ -80,14 +89,22 @@ curl -X POST \
 }'
 ```
 
+![Block](https://github.com/minqukanq/secure-digital-asset-on-a-private-blockchain/blob/master/img/Block.png)
+
 
 
 ### GET Endpoints
 
-**stars/hash:[HASH]** - Get Star block by hash with JSON response.
+**stars/hash:[HASH]** - Get Star block by hash
 
 ```
 curl "http://localhost:8000/stars/hash:e5f7f50e75cf05daf1caddf25c8196bc25f684d61db355de34d7dc0f2e0be97c"
+```
+
+**stars/address:[ADDRESS]** - Get Star block by wallet address
+
+```
+curl "http://localhost:8000/stars/address:19xaiMqayaNrn3x7AjV5cU4Mk5f5prRVpL"
 ```
 
 **/block/[HEIGHT]** - Get star block by star block height with JSON response.
