@@ -30,9 +30,9 @@ class BlockController {
             //check if the address is already in the mempool
             if (this.mempool.checkAddress(address)){
                 console.log("the address " + address + " is already in the mempool");
-                res.send (JSON.stringify(this.mempool.getRequestObject(address)).toString());
+                res.status(200).json((this.mempool.getRequestObject(address)));
             } else {
-                res.send (this.mempool.addRequestValidation(address));
+                res.status(201).json(this.mempool.addRequestValidation(address));
             } 
             
         });
@@ -55,15 +55,15 @@ class BlockController {
                     if (this.mempool.verifyBitcoinMessage(address, signature)){
                         this.mempool.removeTimeOut(address);
                         console.log(JSON.parse(this.mempool.getValidRequest(address)));
-                        res.send(JSON.parse(this.mempool.getValidRequest(address)))
+                        res.status(201).json(this.mempool.getValidRequest(address));
                     } else { 
-                        res.send("Signature is not valid! Try again.");
+                        res.status(403).send("Signature is not valid! Try again.");
                     }
                 } else {
-                    res.send("Time out!!!");
+                    res.status(408).send("Time out!!!");
                 }
             } else {
-                res.send ("You must to submit a validation request before try to validate de signature!");
+                res.status(403).send ("You must to submit a validation request before try to validate de signature!");
             } 
             
         });
@@ -78,13 +78,13 @@ class BlockController {
 
             //check 1: Make sure only one Star can be send in the request
             if (req.body.length){
-                res.send("You sent " + req.body.length + " stars. Only one star per request is allowed!");
+                res.status(403).send("You sent " + req.body.length + " stars. Only one star per request is allowed!");
             } else{
                 //check 2: Star story supports ASCII text, limited to 250 words (500 bytes), and hex encoded.
                 let story = req.body.star.story;
                 let words = story.match(/\S+/g).length;
                 if (words > 250){
-                    res.send("You sent more than 250 words!");
+                    res.status(403).send("You sent more than 250 words!");
                 } else {
                     let address = req.body.address;
                     if (this.mempool.isValid(address)){
@@ -101,10 +101,10 @@ class BlockController {
 
                         this.mempool.addBlock(block).then((result) => {
                             this.mempool.setIsNotValid(address);
-                            res.send(JSON.parse(result));
+                            res.status(201).json(result);
                         });
                     } else {
-                        res.send("You should have a valid address before try to register a star");
+                        res.status(403).send("You should have a valid address before try to register a star");
                     }
                 }
                 
@@ -116,8 +116,8 @@ class BlockController {
         this.app.get("/block/:height", (req, res) => {
             let blockHeight = req.params.height;
             this.mempool.getBlock(blockHeight).then((block) => {
-                res.send(block);
-             }).catch((err) => { res.send("Star " + blockHeight + " not found!\n", err);});
+                res.status(200).json(block);
+             }).catch((err) => { res.status(404).send("Star " + blockHeight + " not found!\n", err);});
         });
     }
 
@@ -132,19 +132,21 @@ class BlockController {
 
             if (request == "hash"){
                 this.mempool.getBlockByHash(value).then((block) => {
-                res.send(block);
-             }).catch((err) => { res.send("Star " + value + " not found!");});
+                res.status(200).json(block);
+             }).catch((err) => { res.status(404).send("Star " + value + " not found!");});
             } else if (request == "address"){
                 this.mempool.getBlockByAddress(value).then((block) => {
-                res.send(block);
-             }).catch((err) => { res.send("Star " + value + " not found!");});
+                res.status(200).json(block);
+             }).catch((err) => { res.status(404).send("Star " + value + " not found!");});
             } else {
-                res.send("You must send a valid request!");
+                // Bad Request
+                res.status(403).send("You must send a valid request!");
             }
         });
 
         this.app.get("/stars/", (req, res) => {
-            res.send("You must send a valid request!");
+            // Bad Request
+            res.status(400).send("You must send a valid request!");
         });
 
     }
